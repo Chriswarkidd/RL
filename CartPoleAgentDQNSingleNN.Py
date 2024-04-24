@@ -40,7 +40,7 @@ class DQN(neuralNetwork.Module):
 
 class Agent():
 
-    def __init__(self, num_actions, num_observations, device, batch_size = 256, gamma = 0.99, epsilon_start = 0.999, epsilon_end = 0.05, epsilon_decay = 2, tau = 0.005, lr = 1e-4):
+    def __init__(self, num_actions, num_observations, device, batch_size = 256, gamma = 0.99, epsilon_start = 0.999, epsilon_end = 0.05, epsilon_decay = 1000, tau = 0.005, lr = 1e-4):
         self.Num_Actions = num_actions
         self.Num_Observations = num_observations
         self.Device = device
@@ -53,10 +53,9 @@ class Agent():
         self.Lr = lr
 
         self.policy_net = DQN(num_observations, num_actions).to(self.Device)
-        self.target_net = DQN(num_observations, num_actions).to(self.Device)
+        #self.target_net = DQN(num_observations, num_actions).to(self.Device)
         self.action_net = DQN(num_observations, num_actions).to(self.Device)
-        self.target_net.load_state_dict(self.policy_net.state_dict())
-        self.action_net.load_state_dict(self.policy_net.state_dict())
+        #self.target_net.load_state_dict(self.policy_net.state_dict())
 
         self.optimizer = optim.AdamW(self.policy_net.parameters(), lr=self.Lr, amsgrad=True)
         self.memory = ReplayMemory(10000)
@@ -101,7 +100,7 @@ class Agent():
 
         next_state_values = torch.zeros(self.Batch_Size, device=self.Device) 
         with torch.no_grad():
-            next_state_values[non_final_mask] = self.target_net(non_final_next_states).max(1).values
+            next_state_values[non_final_mask] = self.policy_net(non_final_next_states).max(1).values
 
         expected_state_action_values = (next_state_values * self.Gamma) + reward_b
 
@@ -117,10 +116,12 @@ class Agent():
         self.memory.push(s,a,nS,r)
 
     def updateWeights(self):
-        target_net_state_dict = self.target_net.state_dict()
+        #target_net_state_dict = self.target_net.state_dict()
         policy_net_state_dict = self.policy_net.state_dict()
 
+        # for key in policy_net_state_dict:
+        #     target_net_state_dict[key] = policy_net_state_dict[key]*self.Tau + target_net_state_dict[key]*(1-self.Tau)
         for key in policy_net_state_dict:
-            target_net_state_dict[key] = policy_net_state_dict[key]*self.Tau + target_net_state_dict[key]*(1-self.Tau)
+            policy_net_state_dict[key] = policy_net_state_dict[key]*self.Tau
         
-        self.target_net.load_state_dict(target_net_state_dict)
+        self.policy_net.load_state_dict(policy_net_state_dict)

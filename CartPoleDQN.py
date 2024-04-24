@@ -1,5 +1,6 @@
 import gymnasium as gym
 import CartPoleAgentDQN
+import CartPoleAgentDQNSingleNN
 import random 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -56,7 +57,7 @@ state, info = environment.reset()
 
 games = 600
 
-a = CartPoleAgentDQN.Agent(environment.action_space.n, len(state), device)
+a = CartPoleAgentDQNSingleNN.Agent(environment.action_space.n, len(state), device)
 
 for game in range(games):
     state, info = environment.reset()
@@ -86,11 +87,12 @@ for game in range(games):
             episode_durations.append(t+1)
             plot_durations()
             break
-    a.updateEpisode()
+
 print("complete") 
 
 #a.PrintAction(old_state)
 plot_durations(show_result=True)
 plt.ioff()
+plt.savefig("./resultsSingleNN.png")    
 plt.show()
-        
+   
