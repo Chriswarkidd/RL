@@ -57,7 +57,9 @@ state, info = environment.reset()
 
 games = 600
 
-a = CartPoleAgentDQNSingleNN.Agent(environment.action_space.n, len(state), device)
+a = CartPoleAgentDQN.Agent(environment.action_space.n, len(state), device)
+
+#a = CartPoleAgentDQNSingleNN.Agent(environment.action_space.n, len(state), device)
 
 for game in range(games):
     state, info = environment.reset()
@@ -93,6 +95,6 @@ print("complete")
 #a.PrintAction(old_state)
 plot_durations(show_result=True)
 plt.ioff()
-plt.savefig("./resultsSingleNN.png")    
+plt.savefig("./results.png")    
 plt.show()
    

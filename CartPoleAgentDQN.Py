@@ -40,7 +40,7 @@ class DQN(neuralNetwork.Module):
 
 class Agent():
 
-    def __init__(self, num_actions, num_observations, device, batch_size = 256, gamma = 0.99, epsilon_start = 0.999, epsilon_end = 0.05, epsilon_decay = 2, tau = 0.005, lr = 1e-4):
+    def __init__(self, num_actions, num_observations, device, batch_size = 256, gamma = 0.99, epsilon_start = 0.999, epsilon_end = 0.05, epsilon_decay = 1, tau = 0.005, lr = 1e-4):
         self.Num_Actions = num_actions
         self.Num_Observations = num_observations
         self.Device = device
