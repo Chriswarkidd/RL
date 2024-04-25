@@ -1,3 +1,5 @@
+#Code from following tutorial at https://pytorch.org/tutorials/intermediate/reinforcement_q_learning.html#training with 
+#some modifications
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt

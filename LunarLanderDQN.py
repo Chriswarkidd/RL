@@ -1,3 +1,5 @@
+#Code from following tutorial at https://pytorch.org/tutorials/intermediate/reinforcement_q_learning.html#training with 
+#some modifications
 import gymnasium as gym
 import CartPoleAgentDQN
 import CartPoleAgentDQNSingleNN
