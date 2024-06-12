@@ -24,17 +24,18 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 episode_durations = []
+episode_rewards = []
 
 def plot_durations(show_result=False):
     plt.figure(1)
-    durations_t = torch.tensor(episode_durations, dtype=torch.float)
+    durations_t = torch.tensor(episode_rewards, dtype=torch.float)
     if show_result:
         plt.title('Result')
     else:
         plt.clf()
         plt.title('Training')
     plt.xlabel('Episode')
-    plt.ylabel('Duration')
+    plt.ylabel('rewards')
     plt.plot(durations_t.numpy())
 
     if len(durations_t) >= 100:
@@ -67,6 +68,7 @@ for game in range(games):
     state, info = environment.reset()
     state = torch.tensor(state, dtype=torch.float32, device=device).unsqueeze(0)
     stepsDone = 0
+    current_episode_rewards = 0
     for t in count():
         
         action = a.PickAction(state, stepsDone, environment)
@@ -86,17 +88,39 @@ for game in range(games):
 
         a.optimizeModel()
         a.updateWeights()
-
+        current_episode_rewards += reward
         if finished:
             episode_durations.append(t+1)
+            episode_rewards.append(current_episode_rewards)
             plot_durations()
             break
 
 print("complete") 
 
-#a.PrintAction(old_state)
+#a.PrintValues(old_state)
 plot_durations(show_result=True)
 plt.ioff()
-plt.savefig("./results.png")    
+plt.savefig("./resultsLunarLander5_20_24.png")    
 plt.show()
-   
+
+environment = gym.make('LunarLander-v2', render_mode='human')
+
+for game in range(10):
+    state, info = environment.reset()
+    state = torch.tensor(state, dtype=torch.float32, device=device).unsqueeze(0)
+    stepsDone = 0
+    current_episode_rewards = 0
+    for t in count():
+        
+        action = a.PickAction(state, stepsDone, environment)
+        stepsDone += 1
+        observation, reward, terminated, truncated, info = environment.step(action.item())
+        finished = terminated or truncated
+
+        if terminated:
+            next_state = None
+        else:
+            next_state = torch.tensor(observation, dtype=torch.float32, device=device).unsqueeze(0)
+
+        if finished:
+            break

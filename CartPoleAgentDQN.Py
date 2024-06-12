@@ -82,6 +82,9 @@ class Agent():
         #print(self.policy_net(state)[0])
         # print(self.policy_net(state).max(1))
 
+    def PrintValues(self,state):
+        print(self.target_net(state).max(1).values)
+
 
     def optimizeModel(self):
         if len(self.memory) < self.Batch_Size:
